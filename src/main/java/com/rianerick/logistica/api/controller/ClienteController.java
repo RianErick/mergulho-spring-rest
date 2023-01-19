@@ -1,9 +1,6 @@
 package com.rianerick.logistica.api.controller;
 import java.util.List;
-import java.util.Optional;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.rianerick.logistica.domain.model.Cliente;
 import com.rianerick.logistica.domain.repository.ClienteRepository;
+import com.rianerick.logistica.domain.service.CatalogoClienteService;
 
 @RequestMapping("/clientes")
 @RestController
@@ -26,6 +24,9 @@ public class ClienteController {
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private CatalogoClienteService catalogoClienteService;
 	
 	@GetMapping("/listar")
 	public List <Cliente> listarClientes() {
@@ -50,7 +51,7 @@ public class ClienteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente adicionar (@Valid @RequestBody Cliente cliente) {
-		return clienteRepository.save(cliente);
+		return catalogoClienteService.salvar(cliente);
 	}
 	
 	
@@ -61,7 +62,8 @@ public class ClienteController {
 			return ResponseEntity.notFound().build();
 		}
 		cliente.setId(clienteId);
-	    cliente = clienteRepository.save(cliente);
+	    cliente = catalogoClienteService.salvar(cliente);
+
 	    return ResponseEntity.ok(cliente);
 	}
 	 
@@ -70,8 +72,8 @@ public class ClienteController {
 		if(!clienteRepository.existsById(clienteId)) {
 			return ResponseEntity.notFound().build();
 		}
-		clienteRepository.deleteById(clienteId);
-
+		catalogoClienteService.deletar(clienteId);
+		
 		return ResponseEntity.noContent().build();
 	}
 
