@@ -2,6 +2,8 @@ package com.rianerick.logistica.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,7 @@ public class ClienteController {
 	
 	
 	@GetMapping("/{clienteId}")
-	 public ResponseEntity<Cliente> buscar( @PathVariable Long clienteId) {
+	 public ResponseEntity <Cliente> buscar( @PathVariable Long clienteId) {
          return clienteRepository.findById(clienteId)
         		 .map(cliente -> ResponseEntity.ok(cliente))
         		 .orElse(ResponseEntity.notFound().build());
@@ -47,13 +49,14 @@ public class ClienteController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cliente adicionar (@RequestBody Cliente cliente) {
+	public Cliente adicionar (@Valid @RequestBody Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 	
+	
 	@PutMapping("/{clienteId}")
 	public ResponseEntity <Cliente> atualizar(@PathVariable Long clienteId,
-		@RequestBody Cliente cliente ){
+		@Valid @RequestBody Cliente cliente ){
 		if(!clienteRepository.existsById(clienteId)) {
 			return ResponseEntity.notFound().build();
 		}
@@ -61,13 +64,14 @@ public class ClienteController {
 	    cliente = clienteRepository.save(cliente);
 	    return ResponseEntity.ok(cliente);
 	}
+	 
 	@DeleteMapping("/{clienteId}")
-	public ResponseEntity<Void> remover(@PathVariable Long clienteId){
+	public ResponseEntity <Void> remover(@PathVariable Long clienteId){
 		if(!clienteRepository.existsById(clienteId)) {
 			return ResponseEntity.notFound().build();
 		}
 		clienteRepository.deleteById(clienteId);
-		
+
 		return ResponseEntity.noContent().build();
 	}
 
